@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Translator">
+<meta name="theme-color" content="#080a0f">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>EN ↔ TH Translator</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #080a0f;
+  --surf:    #0d1018;
+  --surf2:   #131820;
+  --border:  #1e2535;
+  --en:      #4a9eff;
+  --en-dim:  #1a3a6e;
+  --th:      #ff6b4a;
+  --th-dim:  #6e2a1a;
+  --text:    #c8d4e8;
+  --muted:   #3d4d66;
+  --green:   #4ade80;
+  --yellow:  #facc15;
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bot: env(safe-area-inset-bottom, 0px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'IBM Plex Mono', monospace;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding-top: calc(var(--safe-top) + 12px);
+  padding-bottom: calc(var(--safe-bot) + 12px);
+  padding-left: 14px;
+  padding-right: 14px;
+  background:
+    radial-gradient(ellipse at 10% 5%, rgba(74,158,255,0.06) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 95%, rgba(255,107,74,0.05) 0%, transparent 45%),
+    var(--bg);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  gap: 12px;
+}
+
+/* ── Header ── */
+header {
+  text-align: center;
+  padding: 6px 0 2px;
+  flex-shrink: 0;
+}
+.logo {
+  font-size: 1.35rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  color: #e8eef8;
+}
+.logo .en { color: var(--en); }
+.logo .th { color: var(--th); }
+.logo .sep { color: var(--muted); margin: 0 10px; }
+.sub {
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ── Panels ── */
+.panels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.panel {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 160px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.panel.active-en { border-color: var(--en-dim); box-shadow: 0 0 20px rgba(74,158,255,0.1); }
+.panel.active-th { border-color: var(--th-dim); box-shadow: 0 0 20px rgba(255,107,74,0.1); }
+
+.panel-head {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.25);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.badge {
+  font-size: 0.56rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  padding: 3px 7px;
+  border-radius: 3px;
+  border: 1px solid;
+  flex-shrink: 0;
+}
+.badge-en { color: var(--en); border-color: var(--en-dim); background: rgba(74,158,255,0.08); }
+.badge-th { color: var(--th); border-color: var(--th-dim); background: rgba(255,107,74,0.08); }
+
+.waves {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.waves.show { opacity: 1; }
+.wave-bar {
+  width: 2px;
+  border-radius: 2px;
+  animation: wave 0.8s ease-in-out infinite;
+}
+.wave-bar:nth-child(1){height:5px;animation-delay:0s}
+.wave-bar:nth-child(2){height:9px;animation-delay:.1s}
+.wave-bar:nth-child(3){height:12px;animation-delay:.2s}
+.wave-bar:nth-child(4){height:9px;animation-delay:.3s}
+.wave-bar:nth-child(5){height:5px;animation-delay:.4s}
+
+@keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+.panel-body {
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.section-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.transcript {
+  font-size: 0.78rem;
+  line-height: 1.7;
+  min-height: 36px;
+  word-break: break-word;
+  flex: 1;
+}
+.transcript.thai-font {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.9rem;
+}
+.interim { color: var(--muted); font-style: italic; }
+.placeholder { color: var(--muted); opacity: 0.4; font-style: italic; font-size: 0.75rem; }
+
+.divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+.xlat-label {
+  font-size: 0.5rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.65;
+}
+.xlat-label.to-th { color: var(--th); }
+.xlat-label.to-en { color: var(--en); }
+
+.xlat-text {
+  font-size: 0.78rem;
+  line-height: 1.7;
+  min-height: 32px;
+  word-break: break-word;
+}
+.xlat-text.thai { font-family: 'Sarabun', sans-serif; font-size: 0.9rem; color: var(--th); }
+.xlat-text.engl { color: var(--en); }
+
+/* ── Controls ── */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.lang-toggle {
+  display: flex;
+  gap: 2px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  width: 100%;
+  max-width: 320px;
+}
+.lang-btn {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 8px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.lang-btn.active-en { background: rgba(74,158,255,0.15); color: var(--en); }
+.lang-btn.active-th { background: rgba(255,107,74,0.15); color: var(--th); }
+
+/* ── Mic orb ── */
+.orb-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+.orb {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surf2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  transition: border-color 0.25s, box-shadow 0.25s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.orb:active { transform: scale(0.94); }
+.orb.listen-en {
+  border-color: var(--en);
+  animation: pulseEN 1.4s infinite;
+}
+.orb.listen-th {
+  border-color: var(--th);
+  animation: pulseTH 1.4s infinite;
+}
+.orb.speaking { border-color: var(--green); box-shadow: 0 0 20px rgba(74,222,128,0.25); }
+.orb.busy { opacity: 0.45; cursor: not-allowed; }
+
+@keyframes pulseEN{0%{box-shadow:0 0 0 0 rgba(74,158,255,.45)}70%{box-shadow:0 0 0 16px rgba(74,158,255,0)}100%{box-shadow:0 0 0 0 rgba(74,158,255,0)}}
+@keyframes pulseTH{0%{box-shadow:0 0 0 0 rgba(255,107,74,.45)}70%{box-shadow:0 0 0 16px rgba(255,107,74,0)}100%{box-shadow:0 0 0 0 rgba(255,107,74,0)}}
+
+.orb-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Status ── */
+.status-bar {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 14px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  flex-shrink: 0;
+}
+.s-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.s-msg { font-size: 0.6rem; letter-spacing: 0.09em; color: var(--muted); flex: 1; }
+
+/* ── Log ── */
+.log-wrap { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 6px; overflow: hidden; }
+.log-head { display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.log-title { font-size: 0.55rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.clear-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+.log-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.log-list::-webkit-scrollbar { display: none; }
+.log-empty { text-align: center; padding: 18px 0; font-size: 0.6rem; color: var(--muted); letter-spacing: 0.1em; }
+.log-entry {
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+  align-items: start;
+  animation: slideIn 0.25s ease both;
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.log-badge {
+  font-size: 0.52rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 3px;
+  margin-top: 1px;
+}
+.log-badge.en { color: var(--en); background: rgba(74,158,255,0.1); }
+.log-badge.th { color: var(--th); background: rgba(255,107,74,0.1); }
+.log-texts { display: flex; flex-direction: column; gap: 3px; }
+.log-orig { font-size: 0.68rem; line-height: 1.5; color: var(--text); }
+.log-xlat { font-size: 0.68rem; line-height: 1.5; }
+.log-xlat.to-th { font-family: 'Sarabun', sans-serif; font-size: 0.78rem; color: var(--th); }
+.log-xlat.to-en { color: var(--en); }
+
+/* ── Perm warning ── */
+.perm-warn {
+  display: none;
+  background: rgba(255,107,74,0.08);
+  border: 1px solid var(--th-dim);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 0.68rem;
+  color: var(--th);
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+.perm-warn.show { display: block; }
+
+/* ── Install banner ── */
+#installBanner {
+  display: none;
+  background: rgba(74,158,255,0.08);
+  border: 1px solid var(--en-dim);
+  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: 0.65rem;
+  color: var(--en);
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+#installBanner.show { display: block; }
+#installBanner strong { color: #e8eef8; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header>
+    <div class="logo"><span class="en">English</span><span class="sep">↔</span><span class="th">ภาษาไทย</span></div>
+    <div class="sub">Live Voice Translation</div>
+  </header>
+
+  <!-- Install instructions (shown when NOT already installed) -->
+  <div id="installBanner">
+    📲 <strong>Install as iPhone app:</strong> Tap the <strong>Share ⬆</strong> button in Safari → <strong>"Add to Home Screen"</strong> → tap Add. Then open from your home screen for full mic access.
+  </div>
+
+  <!-- Panels -->
+  <div class="panels">
+    <!-- EN -->
+    <div class="panel" id="panelEN">
+      <div class="panel-head">
+        <span class="badge badge-en">EN</span>
+        <div class="waves" id="wavesEN">
+          <div class="wave-bar" style="background:var(--en)"></div>
+          <div class="wave-bar" style="background:var(--en)"></div>
+          <div class="wave-bar" style="background:var(--en)"></div>
+          <div class="wave-bar" style="background:var(--en)"></div>
+          <div class="wave-bar" style="background:var(--en)"></div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="section-label">Heard</div>
+        <div class="transcript" id="enTranscript"><span class="placeholder">Speak English…</span></div>
+        <hr class="divider">
+        <div class="xlat-label to-th">→ Thai</div>
+        <div class="xlat-text thai" id="thOutput"><span class="placeholder" style="font-family:'IBM Plex Mono',monospace;font-size:.72rem">Thai appears here</span></div>
+      </div>
+    </div>
+
+    <!-- TH -->
+    <div class="panel" id="panelTH">
+      <div class="panel-head">
+        <span class="badge badge-th">TH</span>
+        <div class="waves" id="wavesTH">
+          <div class="wave-bar" style="background:var(--th)"></div>
+          <div class="wave-bar" style="background:var(--th)"></div>
+          <div class="wave-bar" style="background:var(--th)"></div>
+          <div class="wave-bar" style="background:var(--th)"></div>
+          <div class="wave-bar" style="background:var(--th)"></div>
+        </div>
+      </div>
+      <div class="panel-body">
+        <div class="section-label">ได้ยิน</div>
+        <div class="transcript thai-font" id="thTranscript"><span class="placeholder">พูดภาษาไทย…</span></div>
+        <hr class="divider">
+        <div class="xlat-label to-en">→ English</div>
+        <div class="xlat-text engl" id="enOutput"><span class="placeholder">English appears here</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lang toggle -->
+  <div class="controls">
+    <div class="lang-toggle">
+      <button class="lang-btn active-en" id="btnEN" onclick="selectLang('en')">🇬🇧 English</button>
+      <button class="lang-btn" id="btnTH" onclick="selectLang('th')">🇹🇭 Thai</button>
+    </div>
+
+    <!-- Orb -->
+    <div class="orb-wrap">
+      <div class="orb" id="orb" onclick="toggleListen()">🎙️</div>
+      <div class="orb-label" id="orbLabel">Tap to speak</div>
+    </div>
+  </div>
+
+  <!-- Permission warning -->
+  <div class="perm-warn" id="permWarn">
+    ⚠️ Microphone access denied.<br>
+    On iPhone: Settings → Safari → Microphone → Allow.<br>
+    Then reload this page.
+  </div>
+
+  <!-- Status -->
+  <div class="status-bar">
+    <div class="s-dot" id="sDot" style="background:var(--green)"></div>
+    <div class="s-msg" id="sMsg">Ready · select language and tap mic</div>
+  </div>
+
+  <!-- Log -->
+  <div class="log-wrap">
+    <div class="log-head">
+      <div class="log-title">Conversation Log</div>
+      <button class="clear-btn" onclick="clearLog()">Clear</button>
+    </div>
+    <div class="log-list" id="logList">
+      <div class="log-empty">No exchanges yet</div>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const SILENCE_MS   = 1800;
+const API_KEY_STORE = 'en_th_api_key';  // localStorage key
+
+// ── State ────────────────────────────────────────────────────────────────────
+let recognition   = null;
+let selectedLang  = 'en';
+let isListening   = false;
+let isTranslating = false;
+let isSpeaking    = false;
+let finalBuf      = '';
+let silenceTimer  = null;
+
+// ── DOM refs ─────────────────────────────────────────────────────────────────
+const orb          = document.getElementById('orb');
+const orbLabel     = document.getElementById('orbLabel');
+const sDot         = document.getElementById('sDot');
+const sMsg         = document.getElementById('sMsg');
+const panelEN      = document.getElementById('panelEN');
+const panelTH      = document.getElementById('panelTH');
+const wavesEN      = document.getElementById('wavesEN');
+const wavesTH      = document.getElementById('wavesTH');
+const enTranscript = document.getElementById('enTranscript');
+const thTranscript = document.getElementById('thTranscript');
+const thOutput     = document.getElementById('thOutput');
+const enOutput     = document.getElementById('enOutput');
+const permWarn     = document.getElementById('permWarn');
+const logList      = document.getElementById('logList');
+
+// ── Status helper ─────────────────────────────────────────────────────────────
+const STATUS_COLORS = {
+  ready:'#4ade80', listening:'#4a9eff', 'listening-th':'#ff6b4a',
+  translating:'#facc15', speaking:'#4ade80', error:'#ff6b4a'
+};
+function st(state, msg) {
+  sMsg.textContent = msg;
+  sDot.style.background = STATUS_COLORS[state] || '#3d4d66';
+}
+
+// ── Language select ───────────────────────────────────────────────────────────
+function selectLang(lang) {
+  selectedLang = lang;
+  document.getElementById('btnEN').className = 'lang-btn' + (lang==='en' ? ' active-en' : '');
+  document.getElementById('btnTH').className = 'lang-btn' + (lang==='th' ? ' active-th' : '');
+  if (isListening) { stopListening(); setTimeout(startListening, 300); }
+}
+
+// ── Orb click ─────────────────────────────────────────────────────────────────
+function toggleListen() {
+  if (isSpeaking || isTranslating) return;
+  isListening ? stopListening() : startListening();
+}
+
+// ── Speech Recognition ────────────────────────────────────────────────────────
+function startListening() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    permWarn.textContent = '⚠️ Speech recognition not supported. Please use Safari on iPhone or Chrome on Android/desktop.';
+    permWarn.classList.add('show');
+    return;
+  }
+
+  finalBuf = '';
+  recognition = new SR();
+  recognition.lang = selectedLang === 'en' ? 'en-US' : 'th-TH';
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.maxAlternatives = 1;
+
+  recognition.onstart = () => {
+    isListening = true;
+    updateUI();
+    st(selectedLang === 'en' ? 'listening' : 'listening-th',
+       selectedLang === 'en' ? 'Listening for English…' : 'กำลังฟังภาษาไทย…');
+  };
+
+  recognition.onresult = (e) => {
+    let newFinal = '', newInterim = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) newFinal += t;
+      else newInterim += t;
+    }
+
+    if (newFinal) {
+      finalBuf += newFinal;
+      const el = selectedLang === 'en' ? enTranscript : thTranscript;
+      el.textContent = finalBuf;
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => {
+        if (isListening && !isTranslating && finalBuf.trim()) {
+          triggerTranslation(selectedLang, finalBuf.trim());
+        }
+      }, SILENCE_MS);
+    } else if (newInterim) {
+      const el = selectedLang === 'en' ? enTranscript : thTranscript;
+      el.innerHTML = (finalBuf ? finalBuf : '') +
+        `<span class="interim"> ${newInterim}</span>`;
+    }
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      permWarn.classList.add('show');
+      st('error', 'Microphone access denied — see instructions above');
+      stopListening();
+    } else if (e.error !== 'no-speech') {
+      st('ready', `Mic error: ${e.error} — tap to retry`);
+      stopListening();
+    }
+  };
+
+  recognition.onend = () => {
+    if (isListening && !isTranslating) {
+      try { recognition.start(); } catch(_) {}
+    }
+  };
+
+  try { recognition.start(); }
+  catch(err) {
+    permWarn.innerHTML = `⚠️ Could not start mic: ${err.message}<br>On iPhone, open in Safari and ensure mic is allowed in Settings → Safari.`;
+    permWarn.classList.add('show');
+  }
+}
+
+function stopListening() {
+  isListening = false;
+  clearTimeout(silenceTimer);
+  if (recognition) { try { recognition.stop(); } catch(_) {} recognition = null; }
+  finalBuf = '';
+  updateUI();
+  st('ready', 'Ready · select language and tap mic');
+}
+
+// ── Update visual state ───────────────────────────────────────────────────────
+function updateUI() {
+  const en = isListening && selectedLang === 'en';
+  const th = isListening && selectedLang === 'th';
+
+  panelEN.className = 'panel' + (en ? ' active-en' : '');
+  panelTH.className = 'panel' + (th ? ' active-th' : '');
+  wavesEN.className = 'waves' + (en ? ' show' : '');
+  wavesTH.className = 'waves' + (th ? ' show' : '');
+
+  if (isSpeaking) {
+    orb.className = 'orb speaking'; orb.textContent = '🔊';
+    orbLabel.textContent = 'Speaking…';
+  } else if (isTranslating) {
+    orb.className = 'orb busy'; orb.textContent = '⚙️';
+    orbLabel.textContent = 'Translating…';
+  } else if (isListening) {
+    orb.className = 'orb ' + (selectedLang === 'en' ? 'listen-en' : 'listen-th');
+    orb.textContent = '⏹';
+    orbLabel.textContent = 'Tap to stop';
+  } else {
+    orb.className = 'orb'; orb.textContent = '🎙️';
+    orbLabel.textContent = 'Tap to speak';
+  }
+}
+
+// ── Translation ───────────────────────────────────────────────────────────────
+async function triggerTranslation(lang, text) {
+  if (isTranslating || !text.trim()) return;
+  isTranslating = true;
+
+  // pause recognition
+  isListening = false;
+  try { recognition?.stop(); } catch(_) {}
+  finalBuf = '';
+  updateUI();
+  st('translating', 'Translating…');
+
+  const outputEl  = lang === 'en' ? thOutput : enOutput;
+  const fromName  = lang === 'en' ? 'English' : 'Thai';
+  const toLang    = lang === 'en' ? 'Thai'    : 'English';
+
+  outputEl.textContent = '';
+
+  const sys = `You are a professional real-time interpreter.
+Translate the user's ${fromName} speech into natural, fluent ${toLang}.
+Output ONLY the translation — no notes, no romanization, no explanation.
+Preserve tone and register exactly.`;
+
+  let translated = '';
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        stream: true,
+        system: sys,
+        messages: [{ role: 'user', content: text }]
+      })
+    });
+
+    if (!res.ok) throw new Error(`API ${res.status}`);
+
+    const reader  = res.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      for (const line of decoder.decode(value, { stream: true }).split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') continue;
+        try {
+          const delta = JSON.parse(raw)?.delta?.text || '';
+          if (delta) { translated += delta; outputEl.textContent = translated; }
+        } catch(_) {}
+      }
+    }
+
+    if (translated) addLog(lang, text, translated);
+
+    // Speak
+    if (translated && window.speechSynthesis) {
+      isSpeaking = true;
+      updateUI();
+      st('speaking', lang === 'en' ? 'Speaking Thai…' : 'Speaking English…');
+
+      await new Promise(resolve => {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(translated);
+        u.lang  = lang === 'en' ? 'th-TH' : 'en-US';
+        u.rate  = 0.92;
+        const voices = window.speechSynthesis.getVoices();
+        const v = voices.find(v => u.lang === 'th-TH' ? v.lang.startsWith('th') : v.lang === 'en-US');
+        if (v) u.voice = v;
+        u.onend = u.onerror = () => { isSpeaking = false; resolve(); };
+        window.speechSynthesis.speak(u);
+      });
+    }
+
+  } catch(err) {
+    outputEl.textContent = `⚠️ ${err.message}`;
+  } finally {
+    isTranslating = false;
+    isSpeaking    = false;
+    updateUI();
+    st('ready', 'Done · tap mic to continue');
+  }
+}
+
+// ── Log ───────────────────────────────────────────────────────────────────────
+function addLog(lang, original, translated) {
+  // remove empty state
+  const empty = logList.querySelector('.log-empty');
+  if (empty) empty.remove();
+
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+  const toTh = lang === 'en';
+  entry.innerHTML = `
+    <span class="log-badge ${lang}">${lang.toUpperCase()}</span>
+    <div class="log-texts">
+      <div class="log-orig">${original}</div>
+      <div class="log-xlat ${toTh ? 'to-th' : 'to-en'}">${translated}</div>
+    </div>`;
+  logList.insertBefore(entry, logList.firstChild);
+  while (logList.children.length > 25) logList.removeChild(logList.lastChild);
+}
+
+function clearLog() {
+  logList.innerHTML = '<div class="log-empty">No exchanges yet</div>';
+}
+
+// ── PWA install banner ────────────────────────────────────────────────────────
+// Show install instructions if running in browser (not standalone/installed)
+if (!window.navigator.standalone && !/android/i.test(navigator.userAgent)) {
+  // iOS Safari
+  if (/iphone|ipad|ipod/i.test(navigator.userAgent)) {
+    document.getElementById('installBanner').classList.add('show');
+  }
+}
+
+// ── Service Worker ────────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
+}
+
+// ── Pre-load voices ───────────────────────────────────────────────────────────
+if (window.speechSynthesis) {
+  window.speechSynthesis.getVoices();
+  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+}
+</script>
+</body>
+</html>
