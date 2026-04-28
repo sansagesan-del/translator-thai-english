@@ -10,50 +10,59 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>EN ↔ TH Translator</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg:#080a0f; --surf:#0d1018; --surf2:#131820; --border:#1e2535;
-  --en:#4a9eff; --en-dim:#1a3a6e; --th:#ff6b4a; --th-dim:#6e2a1a;
-  --text:#c8d4e8; --muted:#3d4d66; --green:#4ade80; --yellow:#facc15;
-  --st:env(safe-area-inset-top,0px); --sb:env(safe-area-inset-bottom,0px);
+  --bg:#080a0f;--surf:#0d1018;--surf2:#131820;--border:#1e2535;
+  --en:#4a9eff;--en-dim:#1a3a6e;--th:#ff6b4a;--th-dim:#6e2a1a;
+  --text:#c8d4e8;--muted:#3d4d66;--green:#4ade80;
+  --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px);
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow:hidden;-webkit-user-select:none;user-select:none;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'IBM Plex Mono',monospace;overflow:hidden;}
 
-/* KEY SCREEN */
-#K{position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 22px;gap:16px;background-image:radial-gradient(ellipse at 20% 15%,rgba(74,158,255,.07) 0%,transparent 50%),radial-gradient(ellipse at 80% 85%,rgba(255,107,74,.06) 0%,transparent 50%);}
+/* ── KEY SCREEN ── */
+#K{position:fixed;inset:0;z-index:99;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;}
 #K.gone{display:none;}
-.k-logo{font-size:1.6rem;color:#e8eef8;text-align:center;}
-.k-logo .e{color:var(--en);} .k-logo .t{color:var(--th);} .k-logo .s{color:var(--muted);margin:0 10px;}
-.k-sub{font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-top:-6px;}
-.k-card{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:22px 20px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px;}
-.k-hint{font-size:.65rem;color:var(--muted);line-height:1.75;text-align:center;}
-.k-hint a{color:var(--en);}
-.k-lbl{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
-.k-inp{background:var(--surf2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.82rem;padding:13px 14px;outline:none;width:100%;-webkit-user-select:text;user-select:text;transition:border-color .2s;}
-.k-inp:focus{border-color:var(--en);}
-.k-inp::placeholder{color:var(--muted);opacity:.45;}
-.k-btn{background:var(--en);color:#080a0f;border:none;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:14px;cursor:pointer;width:100%;transition:opacity .15s;}
-.k-btn:active{opacity:.8;}
-.k-err{font-size:.62rem;color:var(--th);text-align:center;min-height:15px;}
-.k-note{font-size:.55rem;color:var(--muted);text-align:center;line-height:1.65;}
+.kLogo{font-size:1.6rem;color:#e8eef8;text-align:center;}
+.kLogo .e{color:var(--en);}.kLogo .t{color:var(--th);}.kLogo .s{color:var(--muted);margin:0 10px;}
+.kCard{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:22px;width:100%;max-width:340px;display:flex;flex-direction:column;gap:14px;}
+.kHint{font-size:.65rem;color:var(--muted);line-height:1.75;text-align:center;}
+.kHint a{color:var(--en);}
+.kLbl{font-size:.55rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.kInp{background:var(--surf2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'IBM Plex Mono',monospace;font-size:.82rem;padding:13px 14px;outline:none;width:100%;-webkit-user-select:text;user-select:text;transition:border-color .2s;}
+.kInp:focus{border-color:var(--en);}
+.kInp::placeholder{color:var(--muted);opacity:.45;}
+.kBtn{background:var(--en);color:#080a0f;border:none;border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:.72rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:14px;cursor:pointer;width:100%;}
+.kBtn:active{opacity:.8;}
+.kErr{font-size:.62rem;color:var(--th);text-align:center;min-height:15px;}
 
-/* APP */
-#A{display:none;flex-direction:column;height:100%;padding-top:calc(var(--st) + 10px);padding-bottom:calc(var(--sb) + 10px);padding-left:12px;padding-right:12px;gap:10px;background:radial-gradient(ellipse at 10% 5%,rgba(74,158,255,.055) 0%,transparent 45%),radial-gradient(ellipse at 90% 95%,rgba(255,107,74,.045) 0%,transparent 45%),var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+/* ── APP ── */
+#A{display:none;flex-direction:column;height:100%;
+  padding:calc(var(--st) + 8px) 12px calc(var(--sb) + 8px);gap:8px;
+  background:radial-gradient(ellipse at 10% 5%,rgba(74,158,255,.05) 0%,transparent 45%),var(--bg);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;}
 
-header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;padding:3px 0;}
-.logo{font-size:1.05rem;font-weight:300;color:#e8eef8;}
-.logo .e{color:var(--en);}.logo .t{color:var(--th);}.logo .s{color:var(--muted);margin:0 7px;}
-.sub{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
-.apiBtn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 9px;cursor:pointer;border-radius:5px;}
+/* header */
+.hdr{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.logo{font-size:1rem;color:#e8eef8;}
+.logo .e{color:var(--en);}.logo .t{color:var(--th);}.logo .s{color:var(--muted);margin:0 6px;}
+.sub{font-size:.46rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+.apiBtn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.48rem;letter-spacing:.1em;text-transform:uppercase;padding:5px 8px;cursor:pointer;border-radius:5px;}
 
+/* lang toggle */
+.toggle{display:flex;gap:2px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:3px;flex-shrink:0;}
+.tBtn{flex:1;background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;padding:10px 8px;cursor:pointer;border-radius:5px;transition:all .2s;white-space:nowrap;}
+.tBtn.aEN{background:rgba(74,158,255,.15);color:var(--en);}
+.tBtn.aTH{background:rgba(255,107,74,.15);color:var(--th);}
+
+/* panels */
 .panels{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex-shrink:0;}
-.panel{background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-height:170px;transition:border-color .3s,box-shadow .3s;}
-.panel.aEN{border-color:var(--en-dim);box-shadow:0 0 22px rgba(74,158,255,.09);}
-.panel.aTH{border-color:var(--th-dim);box-shadow:0 0 22px rgba(255,107,74,.09);}
-.pHead{padding:8px 12px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.22);display:flex;align-items:center;gap:8px;}
-.badge{font-size:.53rem;font-weight:500;letter-spacing:.16em;padding:3px 7px;border-radius:3px;border:1px solid;flex-shrink:0;}
+.panel{background:var(--surf);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;min-height:160px;transition:border-color .3s,box-shadow .3s;}
+.panel.aEN{border-color:var(--en-dim);box-shadow:0 0 20px rgba(74,158,255,.09);}
+.panel.aTH{border-color:var(--th-dim);box-shadow:0 0 20px rgba(255,107,74,.09);}
+.pH{padding:7px 12px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);display:flex;align-items:center;gap:7px;}
+.badge{font-size:.52rem;font-weight:500;letter-spacing:.15em;padding:3px 7px;border-radius:3px;border:1px solid;flex-shrink:0;}
 .bEN{color:var(--en);border-color:var(--en-dim);background:rgba(74,158,255,.08);}
 .bTH{color:var(--th);border-color:var(--th-dim);background:rgba(255,107,74,.08);}
 .waves{display:flex;align-items:center;gap:2px;margin-left:auto;opacity:0;transition:opacity .3s;}
@@ -63,66 +72,80 @@ header{display:flex;align-items:center;justify-content:space-between;flex-shrink
 .wb:nth-child(3){height:13px;animation-delay:.2s}.wb:nth-child(4){height:9px;animation-delay:.3s}
 .wb:nth-child(5){height:5px;animation-delay:.4s}
 @keyframes wave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
-.pBody{flex:1;padding:11px 12px;display:flex;flex-direction:column;gap:8px;}
-.secLbl{font-size:.49rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
-.heard{font-size:.78rem;line-height:1.7;min-height:30px;word-break:break-word;flex:1;}
-.heard.thai{font-family:'Sarabun',sans-serif;font-size:.9rem;}
+.pB{flex:1;padding:10px 12px;display:flex;flex-direction:column;gap:7px;}
+.sLbl{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+.heard{font-size:.76rem;line-height:1.7;min-height:28px;word-break:break-word;flex:1;}
+.heard.thai{font-family:'Sarabun',sans-serif;font-size:.88rem;}
 .interim{color:var(--muted);font-style:italic;}
-.ph{color:var(--muted);opacity:.35;font-style:italic;font-size:.7rem;}
+.ph{color:var(--muted);opacity:.35;font-style:italic;font-size:.68rem;}
 .dvd{border:none;border-top:1px solid var(--border);}
-.xLbl{font-size:.49rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;}
+.xLbl{font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;opacity:.6;}
 .xLbl.toTH{color:var(--th);}.xLbl.toEN{color:var(--en);}
+.xOut{font-size:.76rem;line-height:1.7;min-height:24px;word-break:break-word;}
+.xOut.thai{font-family:'Sarabun',sans-serif;font-size:.88rem;color:var(--th);}
+.xOut.engl{color:var(--en);}
 
-/* Translation output + speak button row */
-.xRow{display:flex;align-items:flex-start;gap:6px;}
-.xText{font-size:.78rem;line-height:1.7;min-height:28px;word-break:break-word;flex:1;}
-.xText.thaiOut{font-family:'Sarabun',sans-serif;font-size:.9rem;color:var(--th);}
-.xText.enOut{color:var(--en);}
+/* BIG MIC BUTTON */
+.micWrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0;padding:4px 0;}
+.micBtn{
+  width:80px;height:80px;border-radius:50%;
+  background:var(--surf2);border:2px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;cursor:pointer;
+  transition:border-color .25s,box-shadow .25s,transform .1s;
+  -webkit-user-select:none;user-select:none;
+}
+.micBtn:active{transform:scale(.92);}
+.micBtn.LE{border-color:var(--en);animation:pEN 1.4s infinite;}
+.micBtn.LT{border-color:var(--th);animation:pTH 1.4s infinite;}
+.micBtn.BUSY{opacity:.4;cursor:not-allowed;}
+@keyframes pEN{0%{box-shadow:0 0 0 0 rgba(74,158,255,.5)}70%{box-shadow:0 0 0 16px rgba(74,158,255,0)}100%{box-shadow:0 0 0 0 rgba(74,158,255,0)}}
+@keyframes pTH{0%{box-shadow:0 0 0 0 rgba(255,107,74,.5)}70%{box-shadow:0 0 0 16px rgba(255,107,74,0)}100%{box-shadow:0 0 0 0 rgba(255,107,74,0)}}
+.micLbl{font-size:.56rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-align:center;}
 
-/* 🔊 speak button - large tap target for iOS */
-.speakBtn{background:none;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-size:.9rem;padding:4px 7px;cursor:pointer;flex-shrink:0;margin-top:2px;transition:border-color .2s,color .2s;display:none;}
+/* BIG SPEAK BUTTON - always visible after translation, prominent for iOS */
+.speakWrap{flex-shrink:0;}
+.speakBtn{
+  display:none;width:100%;
+  background:rgba(74,222,128,.12);
+  border:1.5px solid var(--green);
+  border-radius:10px;
+  color:var(--green);
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.75rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:13px;cursor:pointer;
+  transition:background .2s;
+}
 .speakBtn.visible{display:block;}
-.speakBtn:active{border-color:var(--green);color:var(--green);}
+.speakBtn:active{background:rgba(74,222,128,.25);}
 
-.ctrl{display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0;}
-.toggle{display:flex;gap:2px;background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:3px;width:100%;max-width:320px;}
-.tBtn{flex:1;background:none;border:none;color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;padding:9px 8px;cursor:pointer;border-radius:5px;transition:all .2s;white-space:nowrap;}
-.tBtn.aEN{background:rgba(74,158,255,.15);color:var(--en);}
-.tBtn.aTH{background:rgba(255,107,74,.15);color:var(--th);}
-.orbWrap{display:flex;flex-direction:column;align-items:center;gap:7px;}
-.orb{width:72px;height:72px;border-radius:50%;border:1.5px solid var(--border);background:var(--surf2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.55rem;line-height:1;transition:border-color .25s,box-shadow .25s,transform .1s;}
-.orb:active{transform:scale(.92);}
-.orb.LE{border-color:var(--en);animation:pEN 1.4s infinite;}
-.orb.LT{border-color:var(--th);animation:pTH 1.4s infinite;}
-.orb.SP{border-color:var(--green);box-shadow:0 0 22px rgba(74,222,128,.22);}
-.orb.BZ{opacity:.4;cursor:not-allowed;}
-@keyframes pEN{0%{box-shadow:0 0 0 0 rgba(74,158,255,.45)}70%{box-shadow:0 0 0 14px rgba(74,158,255,0)}100%{box-shadow:0 0 0 0 rgba(74,158,255,0)}}
-@keyframes pTH{0%{box-shadow:0 0 0 0 rgba(255,107,74,.45)}70%{box-shadow:0 0 0 14px rgba(255,107,74,0)}100%{box-shadow:0 0 0 0 rgba(255,107,74,0)}}
-.orbLbl{font-size:.55rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);}
-
-.statusBar{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:8px 14px;display:flex;align-items:center;gap:9px;flex-shrink:0;}
+/* status */
+.sBar{background:var(--surf);border:1px solid var(--border);border-radius:8px;padding:7px 13px;display:flex;align-items:center;gap:8px;flex-shrink:0;}
 .sDot{width:6px;height:6px;border-radius:50%;flex-shrink:0;transition:background .3s;}
-.sMsg{font-size:.57rem;letter-spacing:.07em;color:var(--muted);flex:1;}
+.sMsg{font-size:.56rem;letter-spacing:.07em;color:var(--muted);flex:1;}
 
-.warn{display:none;background:rgba(255,107,74,.07);border:1px solid var(--th-dim);border-radius:8px;padding:10px 13px;font-size:.63rem;color:var(--th);line-height:1.7;flex-shrink:0;}
+/* warning */
+.warn{display:none;background:rgba(255,107,74,.07);border:1px solid var(--th-dim);border-radius:8px;padding:9px 13px;font-size:.62rem;color:var(--th);line-height:1.7;flex-shrink:0;}
 .warn.on{display:block;}
 
+/* log */
 .logWrap{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;overflow:hidden;}
 .logHead{display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.logTitle{font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
-.clrBtn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;cursor:pointer;border-radius:4px;}
-.logList{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:5px;}
+.logTitle{font-size:.49rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+.clrBtn{background:none;border:1px solid var(--border);color:var(--muted);font-family:'IBM Plex Mono',monospace;font-size:.49rem;letter-spacing:.1em;text-transform:uppercase;padding:4px 8px;cursor:pointer;border-radius:4px;}
+.logList{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:4px;}
 .logList::-webkit-scrollbar{display:none;}
-.logEmpty{text-align:center;padding:14px 0;font-size:.58rem;color:var(--muted);letter-spacing:.1em;}
-.logEntry{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:7px 11px;display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:start;animation:si .25s ease both;}
-@keyframes si{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
-.lBadge{font-size:.49rem;font-weight:500;letter-spacing:.1em;padding:2px 6px;border-radius:3px;margin-top:1px;white-space:nowrap;}
+.logEmpty{text-align:center;padding:12px 0;font-size:.56rem;color:var(--muted);letter-spacing:.1em;}
+.logEntry{background:var(--surf);border:1px solid var(--border);border-radius:6px;padding:6px 10px;display:grid;grid-template-columns:auto 1fr;gap:7px;align-items:start;animation:si .2s ease both;}
+@keyframes si{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:none}}
+.lBadge{font-size:.48rem;font-weight:500;letter-spacing:.1em;padding:2px 5px;border-radius:3px;margin-top:1px;white-space:nowrap;}
 .lBadge.en{color:var(--en);background:rgba(74,158,255,.1);}
 .lBadge.th{color:var(--th);background:rgba(255,107,74,.1);}
 .lTexts{display:flex;flex-direction:column;gap:2px;}
-.lOrig{font-size:.65rem;line-height:1.5;color:var(--text);}
-.lXlat{font-size:.65rem;line-height:1.5;}
-.lXlat.toTH{font-family:'Sarabun',sans-serif;font-size:.76rem;color:var(--th);}
+.lOrig{font-size:.63rem;line-height:1.5;color:var(--text);}
+.lXlat{font-size:.63rem;line-height:1.5;}
+.lXlat.toTH{font-family:'Sarabun',sans-serif;font-size:.74rem;color:var(--th);}
 .lXlat.toEN{color:var(--en);}
 </style>
 </head>
@@ -130,39 +153,41 @@ header{display:flex;align-items:center;justify-content:space-between;flex-shrink
 
 <!-- KEY SCREEN -->
 <div id="K">
-  <div class="k-logo"><span class="e">English</span><span class="s">↔</span><span class="t">ภาษาไทย</span></div>
-  <div class="k-sub">Live Voice Translation</div>
-  <div class="k-card">
-    <div class="k-hint">
+  <div class="kLogo"><span class="e">English</span><span class="s">↔</span><span class="t">ภาษาไทย</span></div>
+  <div class="kCard">
+    <div class="kHint">
       Gib einmal deinen Anthropic API Key ein.<br>
       Er wird nur auf diesem Gerät gespeichert.<br>
       Key holen: <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>
     </div>
     <div>
-      <div class="k-lbl" style="margin-bottom:6px">Anthropic API Key</div>
-      <input class="k-inp" id="keyInp" type="password" placeholder="sk-ant-api03-…"
+      <div class="kLbl">Anthropic API Key</div>
+      <input class="kInp" id="kInp" type="password" placeholder="sk-ant-api03-…"
         autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false">
     </div>
-    <div class="k-err" id="keyErr"></div>
-    <button class="k-btn" onclick="saveKey()">Übersetzer starten →</button>
-    <div class="k-note">Dein Key verlässt niemals dieses Gerät.</div>
+    <div class="kErr" id="kErr"></div>
+    <button class="kBtn" id="kSubmit">Übersetzer starten →</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="A">
-  <header>
+  <div class="hdr">
     <div>
       <div class="logo"><span class="e">EN</span><span class="s">↔</span><span class="t">TH</span></div>
       <div class="sub">Live Voice Translation</div>
     </div>
-    <button class="apiBtn" onclick="resetKey()">⚙ API Key</button>
-  </header>
+    <button class="apiBtn" id="apiBtn">⚙ API Key</button>
+  </div>
+
+  <div class="toggle">
+    <button class="tBtn aEN" id="bEN">🇬🇧 English sprechen</button>
+    <button class="tBtn" id="bTH">🇹🇭 Thai sprechen</button>
+  </div>
 
   <div class="panels">
-    <!-- EN panel -->
     <div class="panel" id="pEN">
-      <div class="pHead">
+      <div class="pH">
         <span class="badge bEN">EN</span>
         <div class="waves" id="wEN">
           <div class="wb" style="background:var(--en)"></div><div class="wb" style="background:var(--en)"></div>
@@ -170,20 +195,16 @@ header{display:flex;align-items:center;justify-content:space-between;flex-shrink
           <div class="wb" style="background:var(--en)"></div>
         </div>
       </div>
-      <div class="pBody">
-        <div class="secLbl">Heard</div>
-        <div class="heard" id="enH"><span class="ph">Speak English…</span></div>
+      <div class="pB">
+        <div class="sLbl">Gehört</div>
+        <div class="heard" id="enH"><span class="ph">Englisch sprechen…</span></div>
         <hr class="dvd">
-        <div class="xLbl toTH">→ Thai</div>
-        <div class="xRow">
-          <div class="xText thaiOut" id="thO"><span class="ph" style="font-family:'IBM Plex Mono',monospace;font-size:.7rem">Thai appears here</span></div>
-          <button class="speakBtn" id="speakTH" onclick="speakStored('th')">🔊</button>
-        </div>
+        <div class="xLbl toTH">→ Thai Übersetzung</div>
+        <div class="xOut thai" id="thO"><span class="ph" style="font-family:'IBM Plex Mono',monospace;font-size:.68rem">Erscheint hier</span></div>
       </div>
     </div>
-    <!-- TH panel -->
     <div class="panel" id="pTH">
-      <div class="pHead">
+      <div class="pH">
         <span class="badge bTH">TH</span>
         <div class="waves" id="wTH">
           <div class="wb" style="background:var(--th)"></div><div class="wb" style="background:var(--th)"></div>
@@ -191,251 +212,270 @@ header{display:flex;align-items:center;justify-content:space-between;flex-shrink
           <div class="wb" style="background:var(--th)"></div>
         </div>
       </div>
-      <div class="pBody">
-        <div class="secLbl">ได้ยิน</div>
-        <div class="heard thai" id="thH"><span class="ph">พูดภาษาไทย…</span></div>
+      <div class="pB">
+        <div class="sLbl">ได้ยิน</div>
+        <div class="heard thai" id="thH"><span class="ph">ภาษาไทย…</span></div>
         <hr class="dvd">
-        <div class="xLbl toEN">→ English</div>
-        <div class="xRow">
-          <div class="xText enOut" id="enO"><span class="ph">English appears here</span></div>
-          <button class="speakBtn" id="speakEN" onclick="speakStored('en')">🔊</button>
-        </div>
+        <div class="xLbl toEN">→ English Translation</div>
+        <div class="xOut engl" id="enO"><span class="ph">Appears here</span></div>
       </div>
     </div>
   </div>
 
-  <div class="ctrl">
-    <div class="toggle">
-      <button class="tBtn aEN" id="bEN" onclick="selLang('en')">🇬🇧 English</button>
-      <button class="tBtn" id="bTH" onclick="selLang('th')">🇹🇭 Thai</button>
-    </div>
-    <div class="orbWrap">
-      <div class="orb" id="orb" onclick="toggleListen()">🎙️</div>
-      <div class="orbLbl" id="orbLbl">Tippen zum Sprechen</div>
-    </div>
+  <!-- MIC -->
+  <div class="micWrap">
+    <div class="micBtn" id="mic">🎙️</div>
+    <div class="micLbl" id="micLbl">Tippen zum Sprechen</div>
+  </div>
+
+  <!-- SPEAK BUTTON — big, always user-triggered (required by iOS) -->
+  <div class="speakWrap">
+    <button class="speakBtn" id="speakBtn">🔊 Übersetzung anhören</button>
   </div>
 
   <div class="warn" id="warn"></div>
 
-  <div class="statusBar">
+  <div class="sBar">
     <div class="sDot" id="sDot" style="background:var(--green)"></div>
-    <div class="sMsg" id="sMsg">Bereit · Sprache wählen und Mikrofon tippen</div>
+    <div class="sMsg" id="sMsgEl">Bereit</div>
   </div>
 
   <div class="logWrap">
     <div class="logHead">
       <div class="logTitle">Conversation Log</div>
-      <button class="clrBtn" onclick="clrLog()">Löschen</button>
+      <button class="clrBtn" id="clrBtn">Löschen</button>
     </div>
     <div class="logList" id="logList"><div class="logEmpty">Noch keine Übersetzungen</div></div>
   </div>
 </div>
 
 <script>
-// ── API Key ───────────────────────────────────────────────────────────────────
-const LS_KEY = 'sandro_enthtrans_key';
-let apiKey = '';
+// ─── STATE MACHINE ────────────────────────────────────────────────────────────
+// States: IDLE | LISTENING | TRANSLATING
+// Transitions are explicit — no race conditions possible
 
+const STATES = { IDLE: 'IDLE', LISTENING: 'LISTENING', TRANSLATING: 'TRANSLATING' };
+let state = STATES.IDLE;
+let inputLang = 'en';   // 'en' or 'th'
+let apiKey = '';
+let rec = null;
+let buf = '';
+let silenceTimer = null;
+let lastTranslation = null; // { text, lang }
+
+const SILENCE_MS = 1800;
+const LS_KEY = 'sandro_enthtrans_v2';
+
+// ─── DOM ──────────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+const K=$('K'), A=$('A'), kInp=$('kInp'), kErr=$('kErr'), kSubmit=$('kSubmit');
+const bEN=$('bEN'), bTH=$('bTH');
+const pEN=$('pEN'), pTH=$('pTH'), wEN=$('wEN'), wTH=$('wTH');
+const enH=$('enH'), thH=$('thH'), thO=$('thO'), enO=$('enO');
+const mic=$('mic'), micLbl=$('micLbl');
+const speakBtn=$('speakBtn');
+const sDot=$('sDot'), sMsgEl=$('sMsgEl');
+const warn=$('warn'), logList=$('logList');
+
+// ─── STATUS ───────────────────────────────────────────────────────────────────
+const DOT = { ready:'#4ade80', listening:'#4a9eff', 'listening-th':'#ff6b4a', translating:'#facc15', error:'#f85149' };
+function setStatus(type, msg) {
+  sDot.style.background = DOT[type] || '#3d4d66';
+  sMsgEl.textContent = msg;
+}
+
+// ─── UI RENDER ────────────────────────────────────────────────────────────────
+function renderUI() {
+  // panels
+  pEN.className = 'panel' + (state===STATES.LISTENING && inputLang==='en' ? ' aEN' : '');
+  pTH.className = 'panel' + (state===STATES.LISTENING && inputLang==='th' ? ' aTH' : '');
+  wEN.className = 'waves' + (state===STATES.LISTENING && inputLang==='en' ? ' on' : '');
+  wTH.className = 'waves' + (state===STATES.LISTENING && inputLang==='th' ? ' on' : '');
+
+  // lang buttons
+  bEN.className = 'tBtn' + (inputLang==='en' ? ' aEN' : '');
+  bTH.className = 'tBtn' + (inputLang==='th' ? ' aTH' : '');
+
+  // mic button
+  if (state === STATES.TRANSLATING) {
+    mic.className = 'micBtn BUSY';
+    mic.textContent = '⚙️';
+    micLbl.textContent = 'Übersetzt…';
+  } else if (state === STATES.LISTENING) {
+    mic.className = 'micBtn ' + (inputLang==='en' ? 'LE' : 'LT');
+    mic.textContent = '⏹';
+    micLbl.textContent = 'Tippen zum Stoppen';
+  } else {
+    mic.className = 'micBtn';
+    mic.textContent = '🎙️';
+    micLbl.textContent = 'Tippen zum Sprechen';
+  }
+}
+
+// ─── KEY SCREEN ───────────────────────────────────────────────────────────────
 function saveKey() {
-  const v = document.getElementById('keyInp').value.trim();
-  if (!v.startsWith('sk-')) { document.getElementById('keyErr').textContent = '⚠ Key muss mit sk- beginnen'; return; }
+  const v = kInp.value.trim();
+  if (!v.startsWith('sk-')) { kErr.textContent = '⚠ Key muss mit sk- beginnen'; return; }
   apiKey = v;
   localStorage.setItem(LS_KEY, v);
-  showApp();
+  K.classList.add('gone');
+  A.style.display = 'flex';
 }
+
 function resetKey() {
-  localStorage.removeItem(LS_KEY); apiKey = ''; stopListening();
-  document.getElementById('keyInp').value = '';
-  document.getElementById('keyErr').textContent = '';
-  document.getElementById('K').classList.remove('gone');
-  document.getElementById('A').style.display = 'none';
-}
-function showApp() {
-  document.getElementById('K').classList.add('gone');
-  document.getElementById('A').style.display = 'flex';
-}
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = localStorage.getItem(LS_KEY);
-  if (saved) { apiKey = saved; showApp(); }
-  // Pre-unlock audio context on first tap anywhere (iOS requirement)
-  document.addEventListener('touchstart', unlockAudio, { once: true });
-  document.addEventListener('click', unlockAudio, { once: true });
-});
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.activeElement === document.getElementById('keyInp')) saveKey();
-});
-
-// ── iOS Audio Unlock ──────────────────────────────────────────────────────────
-// iOS requires a user gesture to allow speech synthesis.
-// We unlock it on first tap and store last translation for manual replay.
-let audioUnlocked = false;
-let lastTranslation = { lang: null, text: null };
-
-function unlockAudio() {
-  if (audioUnlocked) return;
-  // Speak a silent utterance to unlock the audio context
-  const u = new SpeechSynthesisUtterance('');
-  u.volume = 0;
-  window.speechSynthesis?.speak(u);
-  audioUnlocked = true;
+  transitionTo(STATES.IDLE);
+  localStorage.removeItem(LS_KEY);
+  apiKey = '';
+  kInp.value = '';
+  kErr.textContent = '';
+  K.classList.remove('gone');
+  A.style.display = 'none';
 }
 
-function speakStored(lang) {
-  // Called by 🔊 button - this IS a user gesture so iOS allows it
-  if (!lastTranslation.text) return;
-  doSpeak(lastTranslation.text, lang);
-}
+kSubmit.addEventListener('click', saveKey);
+kInp.addEventListener('keydown', e => { if (e.key==='Enter') saveKey(); });
+$('apiBtn').addEventListener('click', resetKey);
 
-function doSpeak(text, lang) {
-  if (!window.speechSynthesis) return;
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  u.lang = lang === 'th' ? 'th-TH' : 'en-US';
-  u.rate = 0.9;
-  // Find best voice
-  const voices = window.speechSynthesis.getVoices();
-  const v = lang === 'th'
-    ? voices.find(v => v.lang.startsWith('th'))
-    : voices.find(v => v.lang === 'en-US' || v.lang.startsWith('en'));
-  if (v) u.voice = v;
-  window.speechSynthesis.speak(u);
-}
-
-// Pre-load voices
-if (window.speechSynthesis) {
-  window.speechSynthesis.getVoices();
-  window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
-}
-
-// ── State ─────────────────────────────────────────────────────────────────────
-const SILENCE = 1800;
-let rec=null, lang='en', listening=false, translating=false, buf='', timer=null;
-
-const $=id=>document.getElementById(id);
-const orb=$('orb'),orbLbl=$('orbLbl'),sDot=$('sDot'),sMsg=$('sMsg');
-const pEN=$('pEN'),pTH=$('pTH'),wEN=$('wEN'),wTH=$('wTH');
-const enH=$('enH'),thH=$('thH'),thO=$('thO'),enO=$('enO');
-const warn=$('warn'),logList=$('logList');
-const speakTH=$('speakTH'),speakEN=$('speakEN');
-
-const SC={ready:'#4ade80',listening:'#4a9eff','listening-th':'#ff6b4a',translating:'#facc15',speaking:'#4ade80',error:'#ff6b4a'};
-function setStatus(s,m){sMsg.textContent=m;sDot.style.background=SC[s]||'#3d4d66';}
-
-// ── FIX: lang selection now properly restarts recognition with new language ───
-function selLang(l) {
-  lang = l;
-  $('bEN').className = 'tBtn' + (l==='en' ? ' aEN' : '');
-  $('bTH').className = 'tBtn' + (l==='th' ? ' aTH' : '');
-  if (listening) {
-    // Stop and restart with new language
-    listening = false;
-    if (rec) { try { rec.stop(); } catch(_){} rec = null; }
-    buf = '';
-    setTimeout(() => startListening(), 400);
+// ─── STATE TRANSITIONS ────────────────────────────────────────────────────────
+function transitionTo(newState) {
+  // Always clean up recognition on any transition away from LISTENING
+  if (state === STATES.LISTENING && newState !== STATES.LISTENING) {
+    stopRec();
   }
-  ui();
+  state = newState;
+  renderUI();
 }
 
-function toggleListen() {
-  unlockAudio(); // ensure audio is unlocked on mic tap
-  if (translating) return;
-  listening ? stopListening() : startListening();
+// ─── MIC BUTTON ───────────────────────────────────────────────────────────────
+mic.addEventListener('click', () => {
+  if (state === STATES.TRANSLATING) return; // busy, ignore
+  if (state === STATES.LISTENING) {
+    transitionTo(STATES.IDLE);
+    setStatus('ready', 'Gestoppt · Tippen zum Sprechen');
+  } else {
+    startListening();
+  }
+});
+
+// ─── LANG BUTTONS ─────────────────────────────────────────────────────────────
+bEN.addEventListener('click', () => switchLang('en'));
+bTH.addEventListener('click', () => switchLang('th'));
+
+function switchLang(l) {
+  if (inputLang === l) return;
+  inputLang = l;
+  // If currently listening: stop and restart with new lang
+  if (state === STATES.LISTENING) {
+    transitionTo(STATES.IDLE);
+    buf = '';
+    setTimeout(() => startListening(), 350);
+  } else {
+    renderUI();
+  }
 }
 
-function ui() {
-  const en=listening&&lang==='en', th=listening&&lang==='th';
-  pEN.className='panel'+(en?' aEN':'');
-  pTH.className='panel'+(th?' aTH':'');
-  wEN.className='waves'+(en?' on':'');
-  wTH.className='waves'+(th?' on':'');
-  if (translating) { orb.className='orb BZ'; orb.textContent='⚙️'; orbLbl.textContent='Übersetzt…'; }
-  else if (listening) { orb.className='orb '+(lang==='en'?'LE':'LT'); orb.textContent='⏹'; orbLbl.textContent='Tippen zum Stoppen'; }
-  else { orb.className='orb'; orb.textContent='🎙️'; orbLbl.textContent='Tippen zum Sprechen'; }
+// ─── SPEECH RECOGNITION ───────────────────────────────────────────────────────
+function stopRec() {
+  clearTimeout(silenceTimer);
+  if (rec) {
+    rec.onstart = rec.onresult = rec.onerror = rec.onend = null;
+    try { rec.abort(); } catch(_) {}
+    rec = null;
+  }
 }
 
 function startListening() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
-    warn.innerHTML='⚠️ Spracherkennung nicht verfügbar. Safari auf iPhone oder Chrome verwenden.';
-    warn.classList.add('on'); return;
+    warn.innerHTML = '⚠️ Spracherkennung nicht verfügbar. Safari auf iPhone oder Chrome verwenden.';
+    warn.classList.add('on');
+    return;
   }
+
+  stopRec(); // clean slate
   buf = '';
+  const capLang = inputLang; // capture at start time
+
   rec = new SR();
-  // FIX: capture lang at recognition start time, don't rely on closure
-  const currentLang = lang;
-  rec.lang = currentLang === 'en' ? 'en-US' : 'th-TH';
+  rec.lang = capLang === 'en' ? 'en-US' : 'th-TH';
   rec.continuous = true;
   rec.interimResults = true;
   rec.maxAlternatives = 1;
 
   rec.onstart = () => {
-    listening = true; ui();
-    setStatus(currentLang==='en'?'listening':'listening-th', currentLang==='en'?'Hört Englisch zu…':'กำลังฟังภาษาไทย…');
+    transitionTo(STATES.LISTENING);
+    setStatus(capLang==='en' ? 'listening' : 'listening-th',
+              capLang==='en' ? 'Hört Englisch zu…' : 'กำลังฟังภาษาไทย…');
   };
 
   rec.onresult = e => {
     let nF='', nI='';
     for (let i=e.resultIndex; i<e.results.length; i++) {
-      const t=e.results[i][0].transcript;
-      if (e.results[i].isFinal) nF+=t; else nI+=t;
+      const t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) nF += t; else nI += t;
     }
     if (nF) {
       buf += nF;
-      const el = currentLang==='en' ? enH : thH;
+      const el = capLang==='en' ? enH : thH;
       el.textContent = buf;
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        if (listening && !translating && buf.trim()) doTranslate(currentLang, buf.trim());
-      }, SILENCE);
+      clearTimeout(silenceTimer);
+      silenceTimer = setTimeout(() => {
+        if (state===STATES.LISTENING && buf.trim()) {
+          doTranslate(capLang, buf.trim());
+        }
+      }, SILENCE_MS);
     } else if (nI) {
-      const el = currentLang==='en' ? enH : thH;
+      const el = capLang==='en' ? enH : thH;
       el.innerHTML = (buf||'') + `<span class="interim"> ${nI}</span>`;
     }
   };
 
   rec.onerror = e => {
-    if (e.error==='not-allowed'||e.error==='service-not-allowed') {
-      warn.innerHTML='⚠️ Mikrofon verweigert.<br>iPhone: Einstellungen → Safari → Mikrofon → Erlauben.';
-      warn.classList.add('on'); setStatus('error','Mikrofon verweigert'); stopListening();
-    } else if (e.error!=='no-speech') {
-      setStatus('ready','Mikrofon-Fehler: '+e.error); stopListening();
+    if (e.error==='not-allowed' || e.error==='service-not-allowed') {
+      warn.innerHTML = '⚠️ Mikrofon verweigert.<br>iPhone: Einstellungen → Safari → Mikrofon → Erlauben.';
+      warn.classList.add('on');
+      transitionTo(STATES.IDLE);
+      setStatus('error', 'Mikrofon verweigert');
+    } else if (e.error !== 'no-speech') {
+      transitionTo(STATES.IDLE);
+      setStatus('ready', 'Mikrofon-Fehler: ' + e.error + ' — nochmal tippen');
     }
   };
 
   rec.onend = () => {
-    // Only restart if still supposed to be listening and lang hasn't changed
-    if (listening && !translating && rec && rec.lang===(currentLang==='en'?'en-US':'th-TH')) {
-      try { rec.start(); } catch(_) {}
+    // Auto-restart ONLY if still in LISTENING state and lang hasn't changed
+    if (state===STATES.LISTENING && inputLang===capLang) {
+      try { rec.start(); } catch(_) {
+        transitionTo(STATES.IDLE);
+        setStatus('ready', 'Mikrofon getrennt — nochmal tippen');
+      }
     }
   };
 
-  try { rec.start(); } catch(err) {
-    warn.innerHTML=`⚠️ Mikrofon Fehler: ${err.message}`; warn.classList.add('on');
+  try {
+    rec.start();
+  } catch(err) {
+    warn.innerHTML = `⚠️ Mikrofon Fehler: ${err.message}`;
+    warn.classList.add('on');
   }
 }
 
-function stopListening() {
-  listening = false; clearTimeout(timer);
-  if (rec) { try { rec.stop(); } catch(_){} rec = null; }
-  buf = ''; ui();
-  setStatus('ready','Bereit · Sprache wählen und Mikrofon tippen');
-}
-
-// ── Translation ───────────────────────────────────────────────────────────────
-async function doTranslate(l, text) {
-  if (translating || !text.trim()) return;
-  translating = true; listening = false;
-  try { rec?.stop(); } catch(_){}
-  buf = ''; ui(); setStatus('translating','Übersetze…');
-
-  const out = l==='en' ? thO : enO;
-  const speakBtn = l==='en' ? speakTH : speakEN;
-  out.textContent = '';
+// ─── TRANSLATION ──────────────────────────────────────────────────────────────
+async function doTranslate(fromLang, text) {
+  // Stop listening, go to TRANSLATING
+  transitionTo(STATES.TRANSLATING);
+  buf = '';
+  setStatus('translating', 'Übersetze…');
   speakBtn.classList.remove('visible');
 
-  const from = l==='en' ? 'English' : 'Thai';
-  const to   = l==='en' ? 'Thai'    : 'English';
-  const sys  = `You are a professional real-time interpreter. Translate the user's ${from} speech into natural, fluent ${to}. Output ONLY the translation — no notes, no romanization, no explanation. Preserve tone and register exactly.`;
+  const out = fromLang==='en' ? thO : enO;
+  const targetLang = fromLang==='en' ? 'th' : 'en';
+  const from = fromLang==='en' ? 'English' : 'Thai';
+  const to   = fromLang==='en' ? 'Thai'    : 'English';
+
+  out.textContent = '';
+
+  const sys = `You are a professional real-time interpreter. Translate the user's ${from} speech into natural, fluent ${to}. Output ONLY the translation — no notes, no romanization, no explanation. Preserve tone and register exactly.`;
 
   let result = '';
   try {
@@ -449,66 +489,112 @@ async function doTranslate(l, text) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1000, stream: true, system: sys,
+        max_tokens: 1000,
+        stream: true,
+        system: sys,
         messages: [{ role: 'user', content: text }]
       })
     });
 
     if (!res.ok) {
       const eb = await res.text();
-      if (res.status===401) { localStorage.removeItem(LS_KEY); apiKey=''; setTimeout(resetKey,400); throw new Error('API Key ungültig'); }
-      throw new Error(`API ${res.status}: ${eb.slice(0,120)}`);
+      if (res.status===401) { localStorage.removeItem(LS_KEY); apiKey=''; setTimeout(resetKey,300); throw new Error('API Key ungültig'); }
+      throw new Error(`API ${res.status}: ${eb.slice(0,100)}`);
     }
 
-    const reader=res.body.getReader(); const dec=new TextDecoder();
-    while(true) {
-      const{done,value}=await reader.read(); if(done)break;
-      for(const line of dec.decode(value,{stream:true}).split('\n')) {
-        if(!line.startsWith('data: '))continue;
-        const raw=line.slice(6).trim(); if(raw==='[DONE]')continue;
-        try{const d=JSON.parse(raw)?.delta?.text||'';if(d){result+=d;out.textContent=result;}}catch(_){}
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    while (true) {
+      const {done, value} = await reader.read();
+      if (done) break;
+      for (const line of dec.decode(value,{stream:true}).split('\n')) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw==='[DONE]') continue;
+        try { const d=JSON.parse(raw)?.delta?.text||''; if(d){result+=d;out.textContent=result;} } catch(_){}
       }
     }
 
     if (result) {
-      // Store for manual replay via 🔊 button
-      const targetLang = l==='en' ? 'th' : 'en';
-      lastTranslation = { lang: targetLang, text: result };
+      // Store for speak button
+      lastTranslation = { text: result, lang: targetLang };
       speakBtn.classList.add('visible');
-
-      // Try auto-speak (works if audio already unlocked by earlier tap)
-      if (audioUnlocked) {
-        doSpeak(result, targetLang);
-      }
-
-      addLog(l, text, result);
+      speakBtn.textContent = targetLang==='th'
+        ? '🔊 Thai anhören'
+        : '🔊 English anhören';
+      addLog(fromLang, text, result);
+      setStatus('ready', '✅ Fertig · 🔊 tippen zum Anhören · 🎙️ für neue Eingabe');
     }
 
   } catch(err) {
-    out.innerHTML=`<span style="color:var(--th)">⚠️ ${err.message}</span>`;
-    setStatus('error','Fehler – API Key oder Verbindung prüfen');
+    out.innerHTML = `<span style="color:var(--th)">⚠️ ${err.message}</span>`;
+    setStatus('error', 'Fehler: ' + err.message.slice(0,50));
   } finally {
-    translating = false; ui();
-    setStatus('ready','Fertig · 🔊 tippen zum Anhören · Mikrofon für neue Übersetzung');
+    // Always return to IDLE after translation — never stuck
+    transitionTo(STATES.IDLE);
   }
 }
 
-// ── Log ───────────────────────────────────────────────────────────────────────
-function addLog(l,orig,xlat) {
-  const e=logList.querySelector('.logEmpty'); if(e)e.remove();
-  const d=document.createElement('div'); d.className='logEntry';
-  d.innerHTML=`<span class="lBadge ${l}">${l.toUpperCase()}</span>
+// ─── SPEAK BUTTON (iOS-compatible: always user-triggered) ─────────────────────
+speakBtn.addEventListener('click', () => {
+  if (!lastTranslation) return;
+  if (!window.speechSynthesis) {
+    setStatus('error', 'Text-to-Speech nicht verfügbar auf diesem Gerät');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(lastTranslation.text);
+  u.lang = lastTranslation.lang==='th' ? 'th-TH' : 'en-US';
+  u.rate = 0.88;
+  // Find best voice
+  const voices = window.speechSynthesis.getVoices();
+  const v = lastTranslation.lang==='th'
+    ? voices.find(v => v.lang.startsWith('th'))
+    : voices.find(v => v.lang==='en-US') || voices.find(v => v.lang.startsWith('en'));
+  if (v) u.voice = v;
+  speakBtn.textContent = '🔊 Spielt…';
+  u.onend = () => {
+    speakBtn.textContent = lastTranslation.lang==='th' ? '🔊 Thai anhören' : '🔊 English anhören';
+  };
+  u.onerror = () => {
+    speakBtn.textContent = lastTranslation.lang==='th' ? '🔊 Thai anhören' : '🔊 English anhören';
+    setStatus('error', 'Sprechen fehlgeschlagen — Voice nicht installiert?');
+  };
+  window.speechSynthesis.speak(u);
+});
+
+// ─── LOG ──────────────────────────────────────────────────────────────────────
+function addLog(l, orig, xlat) {
+  const e = logList.querySelector('.logEmpty');
+  if (e) e.remove();
+  const d = document.createElement('div');
+  d.className = 'logEntry';
+  d.innerHTML = `<span class="lBadge ${l}">${l.toUpperCase()}</span>
     <div class="lTexts">
       <div class="lOrig">${orig}</div>
       <div class="lXlat ${l==='en'?'toTH':'toEN'}">${xlat}</div>
     </div>`;
-  logList.insertBefore(d,logList.firstChild);
-  while(logList.children.length>30)logList.removeChild(logList.lastChild);
+  logList.insertBefore(d, logList.firstChild);
+  while (logList.children.length > 30) logList.removeChild(logList.lastChild);
 }
-function clrLog(){logList.innerHTML='<div class="logEmpty">Noch keine Übersetzungen</div>';}
+$('clrBtn').addEventListener('click', () => {
+  logList.innerHTML = '<div class="logEmpty">Noch keine Übersetzungen</div>';
+});
 
-if('serviceWorker' in navigator)
-  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(LS_KEY);
+  if (saved) { apiKey=saved; K.classList.add('gone'); A.style.display='flex'; }
+  renderUI();
+  // Pre-load voices
+  if (window.speechSynthesis) {
+    window.speechSynthesis.getVoices();
+    window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+  }
+});
+
+if ('serviceWorker' in navigator)
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 </script>
 </body>
 </html>
